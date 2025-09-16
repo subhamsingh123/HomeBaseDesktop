@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-electron/
+out/
+release/
+build/
+*.log
+
+# Electron-builder artifacts
+*.dmg
+*.exe
+*.msi
+*.zip
+*.7z
+*.AppImage
+*.deb
+*.rpm
+*.snap
+latest.yml
+latest-linux.yml
+latest-mac.yml
+*.blockmap
+
+# Vite / cache
+.vite/
+*.pid
+.pnp.*
+.pnpm-debug.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.idea/
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Tests/coverage
+coverage/
+.junit/
+reports/
+playwright-report/
+test-results/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Misc
+*.swp
+*.swm

@@ -43,30 +43,31 @@ async function createWindow() {
   });
 
   const startUrl = getRendererUrl();
-  if (startUrl.startsWith('http')) {
-    await mainWindow.loadURL(startUrl);
-  } else {
-    await mainWindow.loadURL(startUrl);
-  }
+  await mainWindow.loadURL(startUrl);
 
-  mainWindow.on('close', (e) => {
+  mainWindow.on('close', (e: Electron.Event) => {
     if (app.isPackaged || process.platform === 'darwin') {
       e.preventDefault();
       mainWindow?.hide();
     }
   });
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  mainWindow.webContents.setWindowOpenHandler(({ url }: { url: string }) => {
     shell.openExternal(url);
     return { action: 'deny' };
   });
 }
 
 function setupAutoStart(enabled: boolean) {
-  if (process.platform === 'darwin') {
-    app.setLoginItemSettings({ openAtLogin: enabled });
-  } else if (process.platform === 'win32') {
-    app.setLoginItemSettings({ openAtLogin: enabled });
+  if (!app.isPackaged) return; // Skip in dev mode
+  try {
+    if (process.platform === 'darwin') {
+      app.setLoginItemSettings({ openAtLogin: enabled });
+    } else if (process.platform === 'win32') {
+      app.setLoginItemSettings({ openAtLogin: enabled });
+    }
+  } catch (error) {
+    console.log('Auto-start setup failed:', error);
   }
 }
 
@@ -124,7 +125,10 @@ app.whenReady().then(async () => {
   registerShortcuts();
   setupPowerMonitor();
 
-  autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+  // Only check for updates in production
+  if (app.isPackaged) {
+    autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+  }
 
   app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) await createWindow();
@@ -140,4 +144,4 @@ app.on('window-all-closed', () => {
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
-}); 
+});

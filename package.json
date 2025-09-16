@@ -13,7 +13,18 @@
     "dist": "electron-builder",
     "lint": "eslint --ext .ts,.tsx,.js src",
     "test": "jest",
+    "test:watch": "jest --watch",
     "postinstall": "electron-builder install-app-deps"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/tests"],
+    "testMatch": ["**/*.test.ts"],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts"
+    ]
   },
   "build": {
     "appId": "com.example.voffice.desktop",
@@ -71,6 +82,7 @@
     "simple-peer": "^9.11.1"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
