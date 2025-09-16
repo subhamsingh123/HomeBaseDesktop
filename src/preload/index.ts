@@ -1,8 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
+interface Source {
+  id: string;
+  name: string;
+  thumbnail?: string;
+}
+
 const electronAPI = {
   getSystemIdleTime: async (): Promise<number> => ipcRenderer.invoke('voffice:system:get-idle-time'),
-  listScreens: async (types: Array<'screen' | 'window'> = ['screen', 'window']): Promise<Array<any>> =>
+  listScreens: async (types: Array<'screen' | 'window'> = ['screen', 'window']): Promise<Array<Source>> =>
     ipcRenderer.invoke('voffice:system:list-sources', { types }),
   showNotification: async (title: string, body: string): Promise<boolean> =>
     ipcRenderer.invoke('voffice:system:notify', { title, body }),
@@ -14,4 +20,4 @@ const electronAPI = {
     ipcRenderer.on(channel, cb)
 };
 
-contextBridge.exposeInMainWorld('electronAPI', electronAPI); 
+contextBridge.exposeInMainWorld('electronAPI', electronAPI);

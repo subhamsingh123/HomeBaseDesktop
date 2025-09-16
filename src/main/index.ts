@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, Tray, nativeImage, shell, globalShortcut, powerMonitor } from 'electron';
+import { app, BrowserWindow, Tray, nativeImage, shell, globalShortcut, powerMonitor } from 'electron';
 import path from 'node:path';
 import Store from 'electron-store';
 import { autoUpdater } from 'electron-updater';

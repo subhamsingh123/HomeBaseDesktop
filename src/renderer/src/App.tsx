@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { ScreenPickerModal } from "./components/ScreenPickerModal";
 import { SettingsModal } from "./components/SettingsModal";
 
@@ -28,6 +28,12 @@ export const App: React.FC = () => {
   });
 
   console.log('App component rendering');
+
+  const toggleMute = useCallback(() => {
+    const next = !isMuted;
+    setIsMuted(next);
+    if (stream) stream.getAudioTracks().forEach(t => (t.enabled = !next));
+  }, [isMuted, stream]);
 
   useEffect(() => {
     console.log('Setting up idle timer');
@@ -60,11 +66,11 @@ export const App: React.FC = () => {
     } catch (error) {
       console.error('Error setting up event listeners:', error);
     }
-  }, [isInHuddle]);
+  }, [isInHuddle, toggleMute]);
 
   useEffect(() => {
     if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream as any;
+      videoRef.current.srcObject = stream as MediaStream;
       videoRef.current.play().catch(() => {});
     }
   }, [stream]);
@@ -92,8 +98,13 @@ export const App: React.FC = () => {
     try {
       const media = await navigator.mediaDevices.getUserMedia({
         audio: false,
-        video: { mandatory: { chromeMediaSource: "desktop", chromeMediaSourceId: sourceId } as any } as MediaTrackConstraints
-      } as any);
+        video: { 
+          mandatory: { 
+            chromeMediaSource: "desktop", 
+            chromeMediaSourceId: sourceId 
+          } as MediaTrackConstraints 
+        } as MediaTrackConstraints
+      } as MediaStreamConstraints);
       setStream(media);
       setShowPicker(false);
     } catch {
@@ -122,12 +133,6 @@ export const App: React.FC = () => {
     if (videoRef.current) videoRef.current.srcObject = null;
   };
 
-  const toggleMute = () => {
-    const next = !isMuted;
-    setIsMuted(next);
-    if (stream) stream.getAudioTracks().forEach(t => (t.enabled = !next));
-  };
-
   const onSaveSettings = (s: Settings) => setSettings(s);
 
   const testNotification = async () => {
@@ -139,6 +144,15 @@ export const App: React.FC = () => {
       }
     } catch {
       alert("Test notification (mock)");
+    }
+  };
+
+  // Get environment mode safely
+  const getEnvironmentMode = () => {
+    try {
+      return (import.meta as { env?: { MODE?: string } }).env?.MODE || 'development';
+    } catch {
+      return 'development';
     }
   };
 
@@ -206,7 +220,7 @@ export const App: React.FC = () => {
           <strong>Debug Info:</strong>
           <br />• Electron API Available: {window.electronAPI ? 'Yes' : 'No'}
           <br />• Screen Capture: {navigator.mediaDevices ? 'Available' : 'Not Available'}
-          <br />• Environment: {import.meta.env?.MODE || 'development'}
+          <br />• Environment: {getEnvironmentMode()}
         </div>
       </div>
     </div>

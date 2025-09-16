@@ -17,12 +17,12 @@ export class WebRTCManager {
     return Promise.resolve();
   }
 
-  async createPeerConnection(isInitiator: boolean): Promise<any> {
+  async createPeerConnection(_isInitiator: boolean): Promise<Record<string, unknown>> {
     console.log('Creating peer connection (mock)');
     return Promise.resolve({});
   }
 
-  async startScreenShare(sourceId: string): Promise<MediaStream> {
+  async startScreenShare(_sourceId: string): Promise<MediaStream> {
     console.log('Starting screen share (mock)');
     throw new Error('Screen sharing not available in mock mode');
   }

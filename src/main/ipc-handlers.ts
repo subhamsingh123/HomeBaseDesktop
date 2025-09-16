@@ -1,5 +1,13 @@
 import { ipcMain, Notification, desktopCapturer, powerMonitor } from 'electron';
 
+interface SourceWithDisplayId {
+  id: string;
+  displayId?: string;
+  name: string;
+  appIcon?: string;
+  thumbnail?: string;
+}
+
 export function registerIpcHandlers() {
   ipcMain.handle('voffice:system:get-idle-time', () => {
     return powerMonitor.getSystemIdleTime();
@@ -11,9 +19,9 @@ export function registerIpcHandlers() {
       fetchWindowIcons: true,
       thumbnailSize: { width: 320, height: 200 }
     });
-    return sources.map((s) => ({
+    return sources.map((s): SourceWithDisplayId => ({
       id: s.id,
-      displayId: (s as any).display_id || undefined,
+      displayId: (s as unknown as { display_id?: string }).display_id || undefined,
       name: s.name,
       appIcon: s.appIcon ? s.appIcon.toDataURL() : undefined,
       thumbnail: s.thumbnail ? s.thumbnail.toDataURL() : undefined
@@ -25,4 +33,4 @@ export function registerIpcHandlers() {
     n.show();
     return true;
   });
-} 
+}
